@@ -62,14 +62,23 @@ function readBoard() {
 }
 
 function checkWin (board) {
-    for (let i = 0; i < 8; i++) {
-        if((board.red >> i) & 0x01 == 1) {
-            //vertical
-            if(((board.red >> i + 1) & 0x01) == 1) {
-
-            }
-        }
+    if(findLongestChain(board.red) > 3)
+    {
+        return "red wins"
     }
+    
+    if(findLongestChain(board.blue) > 3)
+    {
+        return "blue wins"
+    }
+
+    if(board.red | board.blue == 2139062143 )
+    {
+       return "draw"
+    }
+
+
+   
     //check blue for wins
     //check if board full (draw)
     //return result
@@ -80,25 +89,31 @@ let moveQueue = [];
 let board = {red: 0, blue: 0};
 let currentTurn = 'red';
 
-
-
-
-
-
-
-
+//Finds the longest chain on the board
 function findLongestChain(board) {
     let longestChain = 0;
     for (let i = 0; i < 64; i++) {
-        if ((board >> i) & 0x01 == 1) {
+        if ((board >> i) & 0x01) {
             let j = 0;
             let chain = 1;
-            while((board >> i + j) & 0x01 == 1) {
+            while((board >> i + j) & 0x01) {
                 j++;
                 chain++;
             }
             if (longestChain < chain) longestChain = chain;
-            
+            j = 0;
+            while((board >> i + j) & 0x01){
+                j += 8;
+                chain++;
+            }
+            if(longestChain < chain) longestChain = chain;
+
+            j = 0;
+            while((board >> i + j) & 0x01){
+                j += 9;
+                chain++;
+            }
+            if(longestChain < chain) longestChain = chain;
         }
     }
 }
